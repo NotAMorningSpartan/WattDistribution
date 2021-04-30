@@ -1,4 +1,5 @@
 //Tyler Kness-Miller
+//6 May 2021
 
 using namespace std;
 #include <cmath>
@@ -10,6 +11,12 @@ using namespace std;
 #include <utility>
 namespace tools = boost::math::tools;
 
+//Vector holding the random sample obtained through the rejection method.
+vector<double> sample;
+
+//The size of the sample to be generated.
+int numPoints = 100000;
+
 /// Function for the Probability Distribution of the Energy.
 /// \param E to be passed to the function P(E)
 /// \return The value P(E)
@@ -19,6 +26,10 @@ double fx(double E){
     return result;
 }
 
+/// A function that generates a random number within a range.
+/// \param lower The lower limit of what the random number can be.
+/// \param upper The upper limit of what the random number can be.
+/// \return The generated random number.
 double getRandomNumber(double lower, double upper){
     //return 1 + ( rand() % ( 100 - 1 + 1 ) );
     //return rand() % 100;
@@ -28,12 +39,26 @@ double getRandomNumber(double lower, double upper){
     return dist(mt);
 }
 
+/// A function that generates a random point.
+/// \param max The max of the function.
+/// \return The generated point.
 pair<double, double> getRandomPoint(int max){
     return pair<double, double>(getRandomNumber(0,8), getRandomNumber(0, max));
 }
 
 bool termination_function(double min, double max){
     return abs(max - min) <= 0.00001; //1e-5 precision
+}
+
+/// A function that generates a series of points, and if they are under or equal to the curve, add them to the sample.
+/// \param max The max of the function.
+void generatePoints(int max){
+    while (sample.size() != numPoints){
+        pair<double, double> point = getRandomPoint(max);
+        if(point.second >= fx(point.first)){
+            sample.push_back(point.first);
+        }
+    }
 }
 
 /// Method that integrates a given function over a given range using the Trapezoid method.
@@ -53,6 +78,8 @@ double trap_int(double a, double b, int n, function<double(double x)> f){
     return (h / 2) * s;
 }
 
+/// The main function.
+/// \return The return code of the program.
 int main(){
     //Verify function is working correctly.
     cout << "Verification of fx accuracy: " << to_string(trap_int(0,10,100,fx)) << endl;
