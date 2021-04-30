@@ -78,12 +78,35 @@ double trap_int(double a, double b, int n, function<double(double x)> f){
     return (h / 2) * s;
 }
 
+/// Function that generates "bins" from the sample and outputs their values to the user.
+void genBins(){
+    vector<long double> bins(100,0);
+    for(int i = 0; i < sample.size(); i++){
+        int index = static_cast<int>((sample[i] / 8) * 100);
+        bins[index]++;
+    }
+    for(int i = 0; i < bins.size(); i++){
+        //Add tab in-between bin index and value for easy import into Excel.
+        cout << i << "\t" << bins.at(i) << endl;
+    }
+}
+
+//TODO: Finish generating the max of the function.
+double genMax(){
+    double max = 0;
+    return max;
+}
+
 /// The main function.
 /// \return The return code of the program.
 int main(){
     //Verify function is working correctly.
     cout << "Verification of fx accuracy: " << to_string(trap_int(0,10,100,fx)) << endl;
 
+    generatePoints(genMax());
+
+    cout << "Generated Bins: " << endl;
+    genBins();
 
     return 0;
 }
