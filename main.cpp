@@ -26,6 +26,9 @@ double fx(double E){
     return (0.4865 * sinh(sqrt(2 * E)) * exp(-1 * E));
 }
 
+/// Function that calculates the derivative of fx at a given x.
+/// \param x The x coordinate that the derivative is calculated at.
+/// \return The derivative of fx at x.
 double dfx(double x){
     return boost::math::differentiation::finite_difference_derivative(fx, x);
 }
@@ -50,6 +53,10 @@ pair<double, double> getRandomPoint(double max){
     return pair<double, double>(getRandomNumber(0,8), getRandomNumber(0, max));
 }
 
+/// The termination function, used with bisect.
+/// \param min The minimum.
+/// \param max The maximum.
+/// \return A bool, signaling that the result has the desired precision and calculations are over.
 bool termination_function(double min, double max){
     return abs(min - max) <= 0.00001; //1e-5 precision
 }
@@ -95,7 +102,8 @@ void genBins(){
     }
 }
 
-//TODO: Finish generating the max of the function.
+/// Function that returns the local maximum of the function used in this project.
+/// \return The local maximum of the function.
 double genMax(){
     pair<double, double> result = tools::bisect(dfx, 0.1, 1.0, termination_function);
     return (result.first + result.second) / 2.0;
