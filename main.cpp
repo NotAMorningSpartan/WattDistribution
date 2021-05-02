@@ -116,7 +116,10 @@ int main(){
     //Verify function is working correctly.
     cout << "Verification of fx accuracy: " << to_string(trap_int(0,10,100,fx)) << endl;
 
-    generatePoints(genMax());
+    double max = genMax();
+    cout << "Maximum of fx (E, P(E)): (" << max << ", " << fx(max) << ")" << endl;
+    generatePoints(max);
+    cout << "Size of sample: " << sample.size() << endl;
 
     cout << "Generated Bins: " << endl;
     genBins();
