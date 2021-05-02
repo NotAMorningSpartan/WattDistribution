@@ -6,6 +6,8 @@ using namespace std;
 #include <functional>
 #include <iostream>
 #include <boost/math/tools/roots.hpp>
+#include <boost/math/tools/minima.hpp>
+#include <boost/math/differentiation/finite_difference.hpp>
 #include <vector>
 #include <random>
 #include <utility>
@@ -21,9 +23,11 @@ int numPoints = 100000;
 /// \param E to be passed to the function P(E)
 /// \return The value P(E)
 double fx(double E){
-    double result = 0;
-    result = 0.4865 * sinh(sqrt(2 * E)) * exp(-1 * E);
-    return result;
+    return (0.4865 * sinh(sqrt(2 * E)) * exp(-1 * E));
+}
+
+double dfx(double x){
+    return boost::math::differentiation::finite_difference_derivative(fx, x);
 }
 
 /// A function that generates a random number within a range.
@@ -42,20 +46,20 @@ double getRandomNumber(double lower, double upper){
 /// A function that generates a random point.
 /// \param max The max of the function.
 /// \return The generated point.
-pair<double, double> getRandomPoint(int max){
+pair<double, double> getRandomPoint(double max){
     return pair<double, double>(getRandomNumber(0,8), getRandomNumber(0, max));
 }
 
 bool termination_function(double min, double max){
-    return abs(max - min) <= 0.00001; //1e-5 precision
+    return abs(min - max) <= 0.00001; //1e-5 precision
 }
 
 /// A function that generates a series of points, and if they are under or equal to the curve, add them to the sample.
 /// \param max The max of the function.
-void generatePoints(int max){
+void generatePoints(double max){
     while (sample.size() != numPoints){
         pair<double, double> point = getRandomPoint(max);
-        if(point.second >= fx(point.first)){
+        if(point.second <= fx(point.first)){
             sample.push_back(point.first);
         }
     }
@@ -93,13 +97,14 @@ void genBins(){
 
 //TODO: Finish generating the max of the function.
 double genMax(){
-    double max = 0;
-    return max;
+    pair<double, double> result = tools::bisect(dfx, 0.1, 1.0, termination_function);
+    return (result.first + result.second) / 2.0;
 }
 
 /// The main function.
 /// \return The return code of the program.
 int main(){
+    srand(time(NULL));
     //Verify function is working correctly.
     cout << "Verification of fx accuracy: " << to_string(trap_int(0,10,100,fx)) << endl;
 
